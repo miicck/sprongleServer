@@ -69,6 +69,7 @@ public static class server
             }
             connection.lastActive = time;
 
+            /*
             // 10 second client timeout
             double currentTime = time;
             foreach (var c in connectedClients.ToArray())
@@ -77,6 +78,7 @@ public static class server
                     System.Console.WriteLine("cliennt at " + c.address.Address + " timeout.");
                     connectedClients.Remove(c);
                 }
+            */
 
             // Parse the message
             var split = receivedText.Split('\n');
