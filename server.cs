@@ -38,6 +38,8 @@ public static class server
         udp.Send(data, data.Length, client);
     }
 
+    static string lastMessage = "";
+
     // Server entrypoint
     public static void Main()
     {
@@ -49,7 +51,7 @@ public static class server
             IPEndPoint client = new IPEndPoint(IPAddress.Any, 0);
             Byte[] receivedBytes = udp.Receive(ref client);
             string receivedText = ASCIIEncoding.ASCII.GetString(receivedBytes);
-            System.Console.WriteLine("----------\n" + receivedText + "\n----------");
+            lastMessage = receivedText;
 
             // Keep track of clients
             bool inList = false;
@@ -79,6 +81,14 @@ public static class server
                     connectedClients.Remove(c);
                 }
             */
+
+            // Logging
+            System.Console.WriteLine("Connected clients: " + connectedClients.Count);
+            foreach (var c in connectedClients)
+                System.Console.WriteLine("    Client, address: " + c.address.Address + ":" + c.address.Port + ", last active: " + c.lastActive);
+            System.Console.WriteLine("-----Last server message-----");
+            System.Console.WriteLine(lastMessage);
+            System.Console.WriteLine("-----Last server message-----");
 
             // Parse the message
             var split = receivedText.Split('\n');
