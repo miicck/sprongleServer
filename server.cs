@@ -57,7 +57,7 @@ public static class server
                 ++currentEntityID;
                 clientUpdate(id, new string[] { "id:" + currentEntityID }, client);
                 System.Console.WriteLine("Assigned new entity id: " + currentEntityID);
-                return;
+                continue;
             }
 
             // Send the updates back to the client that sent them
