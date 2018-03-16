@@ -54,7 +54,9 @@ public static class server
             // Assign this entity with a unique entity id
             if (id < 0)
             {
-                clientUpdate(id, new string[] { "id:" + (currentEntityID++) }, client);
+                ++currentEntityID;
+                clientUpdate(id, new string[] { "id:" + currentEntityID }, client);
+                System.Console.WriteLine("Assigned new entity id: " + currentEntityID);
                 return;
             }
 
