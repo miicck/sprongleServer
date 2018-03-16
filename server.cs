@@ -58,7 +58,7 @@ public static class server
             clientConnection connection = new clientConnection();
             connection.address = client;
             foreach (var c in connectedClients)
-                if (c.address == client)
+                if (sameAddress(c.address, client))
                 {
                     inList = true;
                     connection = c;
@@ -121,6 +121,11 @@ public static class server
             foreach (var c in connectedClients)
                 clientUpdate(id, updtArray, c.address);
         }
+    }
+
+    public static bool sameAddress(IPEndPoint a, IPEndPoint b)
+    {
+        return a.Address.Equals(b.Address) && (a.Port == b.Port);
     }
 
     public static double time
