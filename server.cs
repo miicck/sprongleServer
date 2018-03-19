@@ -126,7 +126,7 @@ public static class server
             }
 
             // Send one shot messages to all clients
-            foreach (var u in updates)
+            foreach (var u in updates.ToArray())
                 if (u.StartsWith("oneShot:"))
                 {
                     var spl = u.Split(':');
