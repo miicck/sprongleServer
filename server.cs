@@ -28,12 +28,29 @@ public static class server
         c.Send(data, data.Length, "sprongle.com", PORT);
     }
 
+    // Send an entity one shot message to the server
+    public static void serverOneShot(this UdpClient c, int entityId, string message)
+    {
+        string toEncode = entityId + "\noneShot:" + message;
+        var data = ASCIIEncoding.ASCII.GetBytes(toEncode);
+        c.Send(data, data.Length, "sprongle.com", PORT);
+    }
+
     // Send an entity update to a client
     static void clientUpdate(int entityId, string[] updates, IPEndPoint client)
     {
         string toEncode = entityId + "";
         foreach (var u in updates)
             toEncode += "\n" + u;
+        var data = ASCIIEncoding.ASCII.GetBytes(toEncode);
+        udp.Send(data, data.Length, client);
+    }
+
+    // Send an entity one shot message to the client
+    static void clientOneShot(int entityId, string message, IPEndPoint client)
+    {
+        string toEncode = entityId + "";
+        toEncode += "\noneShot:" + message;
         var data = ASCIIEncoding.ASCII.GetBytes(toEncode);
         udp.Send(data, data.Length, client);
     }
@@ -83,12 +100,13 @@ public static class server
             */
 
             // Logging
+            System.Console.WriteLine("\n\nSERVER INFO");
             System.Console.WriteLine("Connected clients: " + connectedClients.Count);
             foreach (var c in connectedClients)
                 System.Console.WriteLine("    Client, address: " + c.address.Address + ":" + c.address.Port + ", last active: " + c.lastActive);
-            System.Console.WriteLine("-----Last server message-----");
+            System.Console.WriteLine("\n-----Last server message-----");
             System.Console.WriteLine(lastMessage);
-            System.Console.WriteLine("-----Last server message-----");
+            System.Console.WriteLine("-----------------------------");
 
             // Parse the message
             var split = receivedText.Split('\n');
@@ -106,6 +124,18 @@ public static class server
                 ++currentEntityID;
                 continue;
             }
+
+            // Send one shot messages to all clients
+            foreach (var u in updates)
+                if (u.StartsWith("oneShot:"))
+                {
+                    var spl = u.Split(':');
+                    if (spl.Length < 2)
+                        throw new System.NotImplementedException("TODO: deal with this error case.");
+                    foreach (var c in connectedClients)
+                        clientOneShot(id, spl[1], c.address);
+                    updates.Remove(u);
+                }
 
             // Send the updates to all clients (including the one that
             // send the update to me, see below)
