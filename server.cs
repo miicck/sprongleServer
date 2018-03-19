@@ -44,9 +44,6 @@ public static class server
             toEncode += "\n" + u;
         var data = ASCIIEncoding.ASCII.GetBytes(toEncode);
         udp.Send(data, data.Length, client);
-        Console.WriteLine("sent updates to " + entityId);
-        foreach (var u in updates)
-            Console.WriteLine(u);
     }
 
     static string lastMessage = "";
